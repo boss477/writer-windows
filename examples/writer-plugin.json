@@ -1,0 +1,5 @@
+{
+  "id": "focus-theme",
+  "name": "Toggle focus theme",
+  "action": "theme"
+}

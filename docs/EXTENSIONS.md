@@ -28,4 +28,16 @@ The first-party command set already follows the same shape conceptually: open wo
 
 ## Current status
 
-The built-in command registry is stable. Third-party loading is intentionally reserved for a later release so untrusted workspace code cannot execute silently.
+The built-in command registry is stable. Writer now supports declarative, local workspace commands: place JSON manifests in `.writer/plugins/*.json`. Only allowlisted actions are accepted; arbitrary JavaScript is never executed.
+
+Example:
+
+```json
+{
+  "id": "focus-theme",
+  "name": "Toggle focus theme",
+  "action": "theme"
+}
+```
+
+Supported actions are `open`, `new`, `search`, `export`, `theme`, `settings`, and `window`.

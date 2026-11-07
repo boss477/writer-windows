@@ -5,6 +5,14 @@ function createWindow() { win = new BrowserWindow({ width: 1360, height: 860, mi
 app.whenReady().then(createWindow); app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
 ipcMain.handle('pick-folder', async () => { const r = await dialog.showOpenDialog(win, { properties: ['openDirectory', 'createDirectory'] }); return r.canceled ? null : r.filePaths[0]; });
 ipcMain.handle('new-window', () => { const child = new BrowserWindow({ width: 1360, height: 860, minWidth: 900, minHeight: 600, backgroundColor: '#0e1116', titleBarStyle: 'hidden', titleBarOverlay: { color: '#0e1116', symbolColor: '#87909e', height: 36 }, webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true } }); child.loadFile('index.html'); return true; });
+ipcMain.handle('list-plugins', (_, root) => {
+  if (!root) return [];
+  const dir = path.join(root, '.writer', 'plugins');
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir, { withFileTypes: true }).filter(x => x.isFile() && x.name.endsWith('.json')).flatMap(x => {
+    try { const item = JSON.parse(fs.readFileSync(path.join(dir, x.name), 'utf8')); return item.id && item.name && item.action ? [item] : []; } catch { return []; }
+  });
+});
 ipcMain.handle('list-files', (_, root) => walk(root));
 ipcMain.handle('read-file', (_, file) => fs.readFileSync(file, 'utf8'));
 ipcMain.handle('write-file', (_, file, text) => { fs.writeFileSync(file, text, 'utf8'); return true; });
