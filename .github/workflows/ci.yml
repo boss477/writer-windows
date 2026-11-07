@@ -1,12 +1,31 @@
-name: Writer CI
+# Lint, test and build on every push and pull request.
+# release.yml reuses this whole suite before publishing.
+
+name: ci
 
 on:
   push:
+    branches: [master]
   pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
 
 jobs:
-  verify:
-    runs-on: windows-latest
+  check:
+    name: lint + unit tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -15,4 +34,50 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+
+  e2e:
+    name: end-to-end (windows-latest)
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run test:e2e
+
+  build:
+    name: build installer
+    needs: [check, e2e]
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
       - run: npm run dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: writer-windows-installer
+          path: |
+            dist/Writer-*-Windows-*.exe
+            dist/*.blockmap
+          if-no-files-found: error
+          retention-days: 14
+
+  audit:
+    name: dependency audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm audit --omit=dev --audit-level=high

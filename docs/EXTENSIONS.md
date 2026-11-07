@@ -8,11 +8,13 @@ Writer's command palette is the extension seam for future integrations. Commands
 export default {
   id: 'word-count-report',
   name: 'Word count report',
-  commands: [{
-    id: 'report',
-    title: 'Create word-count report',
-    run: ({ document, workspace }) => ({ document, workspace })
-  }]
+  commands: [
+    {
+      id: 'report',
+      title: 'Create word-count report',
+      run: ({ document, workspace }) => ({ document, workspace }),
+    },
+  ],
 };
 ```
 
