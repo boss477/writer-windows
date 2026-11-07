@@ -1,12 +1,17 @@
 {
   "name": "writer-windows",
   "version": "0.1.0",
-  "description": "A fast, private Markdown workspace for Windows.",
+  "description": "A fast, private Markdown workspace for Windows with Mermaid, tabs, workspaces, search and HTML export.",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "check": "node --check main.js && node --check preload.js && node --check renderer.js",
-    "dist": "electron-builder --win"
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --test test/*.test.js",
+    "test:e2e": "node --test test/e2e/*.test.js",
+    "check": "npm run lint && npm run format:check && npm test",
+    "dist": "electron-builder --win --publish never"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -26,15 +31,54 @@
     "appId": "computer.writer.windows",
     "productName": "Writer",
     "files": [
-      "**/*",
-      "!node_modules/.cache"
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "styles.css",
+      "lib/**/*",
+      "build/icon.png",
+      "examples/**/*",
+      "LICENSE",
+      "node_modules/marked/lib/marked.umd.js",
+      "node_modules/dompurify/dist/purify.min.js",
+      "node_modules/mermaid/dist/mermaid.min.js"
     ],
+    "icon": "build/icon.png",
     "win": {
       "target": "nsis",
       "artifactName": "Writer-${version}-Windows-${arch}.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "perMachine": false
     }
   },
   "allowScripts": {
     "electron@38.8.6": true
-  }
+  },
+  "license": "MIT",
+  "author": "boss477",
+  "homepage": "https://github.com/boss477/writer-windows#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boss477/writer-windows.git"
+  },
+  "bugs": {
+    "url": "https://github.com/boss477/writer-windows/issues"
+  },
+  "keywords": [
+    "markdown",
+    "mermaid",
+    "editor",
+    "electron",
+    "windows",
+    "local-first",
+    "notes"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "private": true
 }
