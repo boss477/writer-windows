@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
     <title>Writer</title>
     <link rel="stylesheet" href="styles.css" />
@@ -67,6 +67,14 @@
         </div>
       </section>
     </main>
+    <div id="nameDialog" class="overlay" hidden>
+      <div class="dialog">
+        <h2 id="nameTitle">New note</h2>
+        <input id="nameInput" placeholder="Note name" maxlength="100" />
+        <button id="nameOk">Create</button>
+        <button id="nameCancel">Cancel</button>
+      </div>
+    </div>
     <div id="palette" class="overlay" hidden>
       <div class="dialog">
         <input id="paletteInput" placeholder="Type a command…" /><button data-command="open">
@@ -96,6 +104,7 @@
       </div>
     </div>
     <script src="node_modules/marked/lib/marked.umd.js"></script>
+    <script src="node_modules/dompurify/dist/purify.min.js"></script>
     <script src="node_modules/mermaid/dist/mermaid.min.js"></script>
     <script src="renderer.js"></script>
   </body>

@@ -12,8 +12,8 @@ const $ = (id) => document.getElementById(id),
 const settings = JSON.parse(localStorage.getItem('writer-settings') || '{}');
 function escapeHtml(s) {
   return String(s).replace(
-    /[&<>\"']/g,
-    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' })[c],
+    /[&<>"']/g,
+    (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
   );
 }
 function titleOf(file) {
@@ -138,7 +138,8 @@ function closeTab(file) {
   renderTabs();
 }
 function renderMarkdown(text) {
-  return marked.parse(text, { breaks: true, gfm: true });
+  // Sanitise before it reaches innerHTML: Markdown may embed raw HTML from untrusted files.
+  return DOMPurify.sanitize(marked.parse(text, { breaks: true, gfm: true }));
 }
 async function renderPreview() {
   preview.innerHTML = renderMarkdown(editor.value);
@@ -173,16 +174,48 @@ function update() {
 async function save() {
   if (!current) return;
   docs.set(current, editor.value);
-  await writer.writeFile(current, editor.value);
-  $('saveState').textContent = 'Saved';
-  $('saveState').className = 'saved';
+  try {
+    await writer.writeFile(current, editor.value);
+    $('saveState').textContent = 'Saved';
+    $('saveState').className = 'saved';
+  } catch (error) {
+    console.error(error);
+    $('saveState').textContent = 'Save failed';
+    $('saveState').className = 'unsaved';
+  }
+}
+// Electron does not implement window.prompt(), so ask for names in an in-app dialog.
+function askName(title, initial) {
+  return new Promise((resolve) => {
+    const overlay = $('nameDialog');
+    const input = $('nameInput');
+    $('nameTitle').textContent = title;
+    input.value = initial;
+    overlay.hidden = false;
+    input.focus();
+    input.select();
+    const finish = (value) => {
+      overlay.hidden = true;
+      $('nameOk').onclick = $('nameCancel').onclick = input.onkeydown = overlay.onclick = null;
+      resolve(value);
+    };
+    $('nameOk').onclick = () => finish(input.value.trim());
+    $('nameCancel').onclick = () => finish(null);
+    overlay.onclick = (e) => {
+      if (e.target === overlay) finish(null);
+    };
+    input.onkeydown = (e) => {
+      if (e.key === 'Enter') finish(input.value.trim());
+      if (e.key === 'Escape') finish(null);
+    };
+  });
 }
 async function newNote() {
   if (!root) {
     await openWorkspace();
     if (!root) return;
   }
-  const name = prompt('New note name', 'Untitled');
+  const name = await askName('New note', 'Untitled');
   if (name) {
     const f = await writer.newFile(root, name);
     await refresh();
@@ -351,9 +384,10 @@ document.body.addEventListener('dragleave', () => document.body.classList.remove
 document.body.addEventListener('drop', (e) => {
   e.preventDefault();
   document.body.classList.remove('dragging');
-  [...e.dataTransfer.files]
-    .filter((f) => /\.(md|markdown|txt|html?)$/i.test(f.name))
-    .forEach((f) => select(f.path));
+  const dropped = [...e.dataTransfer.files].filter((f) =>
+    /\.(md|markdown|txt|html?)$/i.test(f.name),
+  );
+  writer.allowDropped(dropped).then((paths) => paths.forEach(select));
 });
 writer.onFolderChanged(() => refresh());
 if (localStorage.getItem('writer-theme') === 'light') document.body.classList.add('light');
