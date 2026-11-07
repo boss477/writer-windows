@@ -1,0 +1,5 @@
+node_modules
+dist
+qa-profile
+package-lock.json
+CHANGELOG.md

@@ -9,10 +9,19 @@
     "dist": "electron-builder --win"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "electron": "^38.2.0",
-    "electron-builder": "^26.0.12"
+    "electron-builder": "^26.0.12",
+    "eslint": "^9.39.5",
+    "globals": "^17.14.0",
+    "playwright-core": "^1.65.0",
+    "prettier": "^3.9.10"
   },
-  "dependencies": { "marked": "^16.3.0", "mermaid": "^11.12.0" },
+  "dependencies": {
+    "dompurify": "^3.4.17",
+    "marked": "^16.3.0",
+    "mermaid": "^11.12.0"
+  },
   "build": {
     "appId": "computer.writer.windows",
     "productName": "Writer",

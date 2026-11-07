@@ -1,7 +1,102 @@
-<!doctype html><html><head><meta charset="UTF-8"><meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"><title>Writer</title><link rel="stylesheet" href="styles.css"></head><body>
-<header><div class="traffic"></div><div class="brand"><span class="mark">W</span><span>Writer</span></div><select id="workspaceSelect" class="workspace"><option>No workspace</option></select><div class="top-actions"><button id="searchBtn">Search</button><button id="paletteBtn">Ctrl K</button><button id="openBtn">Open workspace</button><button id="newBtn" class="icon">＋</button><button id="exportBtn" class="icon" title="Export HTML">↗</button><button id="themeBtn" class="icon">◐</button><button id="settingsBtn" class="icon" title="Settings">⚙</button></div></header>
-<main><aside><div class="side-title"><span>FILES</span><button id="refreshBtn">↻</button></div><div id="fileList" class="file-list"><div class="empty">Open a folder to begin<br><small>Your documents stay local.</small></div></div><div class="side-footer"><span class="status-dot"></span><span id="connectionState">Ready</span><span id="count"></span></div></aside>
-<section class="editor-shell"><div id="tabs" class="tabbar"><div class="tab active">Welcome</div><div class="view-toggle"><button data-view="edit" class="selected">Edit</button><button data-view="preview">Preview</button></div></div><div id="searchPanel" hidden><input id="searchInput" placeholder="Search all workspace files…"><div id="searchResults"></div></div><div id="welcome" class="welcome"><div class="welcome-icon">✦</div><h1>A quiet place for your ideas.</h1><p>Open a workspace folder to start writing.</p><button id="welcomeOpen">Choose workspace</button><div class="shortcuts"><span>Ctrl K</span> Command palette <span>Ctrl O</span> Open files <span>Ctrl F</span> Search</div></div><textarea id="editor" spellcheck="false" hidden></textarea><article id="preview" class="preview" hidden></article><div class="editor-status"><span id="cursor">Ln 1, Col 1</span><span id="wordCount">0 words</span><span id="saveState">Ready</span><span>Markdown + Mermaid</span></div></section></main>
-<div id="palette" class="overlay" hidden><div class="dialog"><input id="paletteInput" placeholder="Type a command…"><button data-command="open">Open workspace <kbd>Ctrl O</kbd></button><button data-command="new">New note</button><button data-command="search">Search workspace <kbd>Ctrl F</kbd></button><button data-command="export">Export HTML</button><button data-command="theme">Toggle theme</button><button data-command="settings">Settings</button><button data-command="window">New Writer window</button></div></div>
-<div id="settings" class="overlay" hidden><div class="dialog settings-dialog"><h2>Settings</h2><label>Editor font size <input id="fontSize" type="range" min="12" max="24" step="1"><output id="fontSizeValue"></output></label><label>Preview width <input id="previewWidth" type="range" min="640" max="1200" step="20"><output id="previewWidthValue"></output></label><button id="newWindowBtn">Open new Writer window</button><button id="closeSettings">Done</button></div></div>
-<script src="node_modules/marked/lib/marked.umd.js"></script><script src="node_modules/mermaid/dist/mermaid.min.js"></script><script src="renderer.js"></script></body></html>
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'"
+    />
+    <title>Writer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="traffic"></div>
+      <div class="brand"><span class="mark">W</span><span>Writer</span></div>
+      <select id="workspaceSelect" class="workspace">
+        <option>No workspace</option>
+      </select>
+      <div class="top-actions">
+        <button id="searchBtn">Search</button><button id="paletteBtn">Ctrl K</button
+        ><button id="openBtn">Open workspace</button><button id="newBtn" class="icon">＋</button
+        ><button id="exportBtn" class="icon" title="Export HTML">↗</button
+        ><button id="themeBtn" class="icon">◐</button
+        ><button id="settingsBtn" class="icon" title="Settings">⚙</button>
+      </div>
+    </header>
+    <main>
+      <aside>
+        <div class="side-title"><span>FILES</span><button id="refreshBtn">↻</button></div>
+        <div id="fileList" class="file-list">
+          <div class="empty">
+            Open a folder to begin<br /><small>Your documents stay local.</small>
+          </div>
+        </div>
+        <div class="side-footer">
+          <span class="status-dot"></span><span id="connectionState">Ready</span
+          ><span id="count"></span>
+        </div>
+      </aside>
+      <section class="editor-shell">
+        <div id="tabs" class="tabbar">
+          <div class="tab active">Welcome</div>
+          <div class="view-toggle">
+            <button data-view="edit" class="selected">Edit</button
+            ><button data-view="preview">Preview</button>
+          </div>
+        </div>
+        <div id="searchPanel" hidden>
+          <input id="searchInput" placeholder="Search all workspace files…" />
+          <div id="searchResults"></div>
+        </div>
+        <div id="welcome" class="welcome">
+          <div class="welcome-icon">✦</div>
+          <h1>A quiet place for your ideas.</h1>
+          <p>Open a workspace folder to start writing.</p>
+          <button id="welcomeOpen">Choose workspace</button>
+          <div class="shortcuts">
+            <span>Ctrl K</span> Command palette <span>Ctrl O</span> Open files
+            <span>Ctrl F</span> Search
+          </div>
+        </div>
+        <textarea id="editor" spellcheck="false" hidden></textarea>
+        <article id="preview" class="preview" hidden></article>
+        <div class="editor-status">
+          <span id="cursor">Ln 1, Col 1</span><span id="wordCount">0 words</span
+          ><span id="saveState">Ready</span><span>Markdown + Mermaid</span>
+        </div>
+      </section>
+    </main>
+    <div id="palette" class="overlay" hidden>
+      <div class="dialog">
+        <input id="paletteInput" placeholder="Type a command…" /><button data-command="open">
+          Open workspace <kbd>Ctrl O</kbd></button
+        ><button data-command="new">New note</button
+        ><button data-command="search">Search workspace <kbd>Ctrl F</kbd></button
+        ><button data-command="export">Export HTML</button
+        ><button data-command="theme">Toggle theme</button
+        ><button data-command="settings">Settings</button
+        ><button data-command="window">New Writer window</button>
+      </div>
+    </div>
+    <div id="settings" class="overlay" hidden>
+      <div class="dialog settings-dialog">
+        <h2>Settings</h2>
+        <label
+          >Editor font size <input id="fontSize" type="range" min="12" max="24" step="1" /><output
+            id="fontSizeValue"
+          ></output></label
+        ><label
+          >Preview width
+          <input id="previewWidth" type="range" min="640" max="1200" step="20" /><output
+            id="previewWidthValue"
+          ></output></label
+        ><button id="newWindowBtn">Open new Writer window</button
+        ><button id="closeSettings">Done</button>
+      </div>
+    </div>
+    <script src="node_modules/marked/lib/marked.umd.js"></script>
+    <script src="node_modules/mermaid/dist/mermaid.min.js"></script>
+    <script src="renderer.js"></script>
+  </body>
+</html>
